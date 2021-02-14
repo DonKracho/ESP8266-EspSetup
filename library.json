@@ -1,0 +1,35 @@
+{
+  "name": "EspSetup",
+  "version": "1.0.0",
+  "description": "WebServer to setup ESP8266 WiFi network connection stored to configuration file on LittleFS. This library will instantiate a HTTP and websockets server, NTP client, set DNS and TCP/UDP sockets through WiFi connection.",
+  "keywords": "ESP8266, WIFI, NTP, OTA, server, setup, configuration",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DonKracho/ESP8266-EspSetup.git"
+  },
+  "authors": {
+    "name": "Wolfgang Kracht",
+    "url": "https://github.com/DonKracho",
+    "maintainer": true
+  },
+  "dependencies": [
+    {
+      "owner": "links2004",
+	  "name": "WebSockets",
+	  "version": "^2.3.2"
+	},
+    {
+      "owner": "bblanchon",
+	  "name": "ArduinoJson",
+	  "version": "^6.17.2"
+	},
+    {
+	  "owner": "PaulStoffregen",
+      "name": "Time",
+	  "version": "^1.6"
+	}
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif8266"
+}

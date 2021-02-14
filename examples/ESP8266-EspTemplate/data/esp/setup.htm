@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Setup</title>
+<style>
+body{zoom:1;margin:5px 5px 0px 5px;font:1.0em Arial;color:#eee;background:#2a3649;}
+table{width:100%;box-shadow:5px 5px 9px #111;}
+table,th,td{margin:0px 0px 5px 0px;text-align:center;color:#111;background:#eee;border:1px solid black;border-spacing:0;border-collapse:collapse;}
+th{padding:6px;font-weight:bold;color:#eee;background:linear-gradient(to bottom,#888,#000);}
+td{padding:3px;border-bottom:none;}
+.but,button{outline:none;width:168px;font:1.0em Arial;display:inline-block;white-space:nowrap;background:linear-gradient(to bottom,#fff,#777);border:1px solid #777;padding:12px;margin:12px 0px 12px 3px;text-shadow:1px 1px 0 rgba(255,255,255,0.5);color:#111;text-decoration:none;border-radius:.2em;box-shadow:3px 3px 6px #333;}
+.but:active,button:active{box-shadow:inset 2px 2px 4px #333;transform: translateY(2px);}
+p{margin:5px;}
+input{font:1.0em Arial;}
+.b{font:1.5em Arial;text-shadow:1px 1px 1px #000;}
+.f{font:2.0em Arial;}
+.h{font:3.0em Arial;}
+.w30{width:30%;}
+.w95{width:95%;}
+.g{background:#0f0;}
+</style>
+
+<script type="text/javascript" charset="utf-8">
+var connection = new WebSocket('ws://'+location.hostname+':81/',['arduino']);
+
+connection.onopen=function()
+{
+  connection.send('EspSetupPage '+new Date());
+}
+connection.onmessage=function(e)
+{
+console.log('Server: ',e.data);
+if(e.data.startsWith('{"apMode"'))fill(e.data);
+}
+connection.onerror=function(error)
+{
+console.log('WebSocket Error '+error);
+}
+function reboot()
+{
+connection.send('EspSetupReset');
+}
+function save()
+{
+var obj = new Object();
+obj.apMode  = document.getElementById('ap_mode').checked;
+obj.wlSsid  = document.getElementById('wl_ssid').value;
+obj.wlPass  = document.getElementById('wl_pass').value;
+obj.wlSip4  = document.getElementById('wl_sip4').value;
+obj.apName  = document.getElementById('ap_ssid').value;
+obj.apPass  = document.getElementById('ap_pass').value;
+obj.apSip4  = document.getElementById('ap_sip4').value;
+obj.apChan  = document.getElementById('ap_chan').value;
+obj.hstName = document.getElementById('hst_name').value;
+obj.webPort = document.getElementById('web_port').value;
+obj.webUser = document.getElementById('web_user').value;
+obj.webPass = document.getElementById('web_pass').value;
+obj.udpPort = document.getElementById('udp_port').value;
+obj.tcpPort = document.getElementById('tcp_port').value;
+obj.ntpEnab = document.getElementById('ntp_enab').checked;
+obj.ntpHost = document.getElementById('ntp_host').value;
+obj.gmtOffs = document.getElementById('gmt_offs').value;
+obj.dsEnab  = document.getElementById('ds_enab').checked;
+obj.dsLoop  = document.getElementById('ds_loop').value;
+var jsonString = JSON.stringify(obj,null,'\t');
+connection.send('EspSetupSave'+jsonString);
+}
+function fill(jsonString)
+{
+console.log(jsonString);
+var obj = JSON.parse(jsonString);
+if (obj.apMode) document.getElementById('ap_mode').checked = true;
+else document.getElementById('wl_mode').checked = true;
+document.getElementById('wl_ssid').value = obj.wlSsid;
+document.getElementById('wl_pass').value = obj.wlPass;
+document.getElementById('wl_sip4').value = obj.wlSip4;
+document.getElementById('ap_ssid').value = obj.apName;
+document.getElementById('ap_pass').value = obj.apPass;
+document.getElementById('ap_sip4').value = obj.apSip4;
+document.getElementById('ap_chan').value = obj.apChan;
+document.getElementById('hst_name').value = obj.hstName;
+document.getElementById('web_port').value = obj.webPort;
+document.getElementById('web_user').value = obj.webUser;
+document.getElementById('web_pass').value = obj.webPass;
+document.getElementById('udp_port').value = obj.udpPort;
+document.getElementById('tcp_port').value = obj.tcpPort;
+document.getElementById('ntp_enab').checked = obj.ntpEnab;
+document.getElementById('ntp_host').value = obj.ntpHost;
+document.getElementById('gmt_offs').value = obj.gmtOffs;
+document.getElementById('ds_enab').checked = obj.dsEab;
+document.getElementById('ds_loop').value = obj.dsLoop;
+document.getElementById('mac').innerHTML = obj.mac;
+}
+</script>
+</head>
+<body>
+<div class="b">ESP Network Setup</div>
+<br>
+<table>
+<tbody><tr><th colspan="2"><b>HOST</b></th></tr>
+<tr><td class="w30">MAC Address</td><td id="mac"></td></tr>
+<tr><td>mDNS Name</td><td><input class="w95" type="text" id="hst_name" value=""></td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody><tr><th colspan="2"><b><input type="radio" id="wl_mode" name="mode" class="s" value="cl">enable WLAN CLIENT</b></th></tr>
+<tr><td class="w30">SSID</td><td><input class="w95" type="text" id="wl_ssid" value=""></td></tr>
+<tr><td>Password</td><td><input class="w95" type="password" id="wl_pass" value=""></td></tr>
+<tr><td>Static IP</td><td><input class="w95" type="url" id="wl_sip4" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" value=""></td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<tr><th colspan="2"><b><input type="radio" id="ap_mode" name="mode" class="s" value="ap">enable ACCESS POINT (Fallback)</b></th></tr>
+<tr><td class="w30">Channel</td><td><select id="ap_chan"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9" selected="">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option></select></td></tr>
+<tr><td>SSID</td><td><input class="w95" type="text" id="ap_ssid" value=""></td></tr>
+<tr><td>Password</td><td><input class="w95" type="password" id="ap_pass" value=""></td></tr>
+<tr><td>Server IP</td><td><input class="w95" type="url" id="ap_sip4" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" value=""></td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<tr><th colspan="2"><b>WEB SERVER</b></th></tr>
+<tr><td class="w30">Port</td><td><input class="w95" type="text" id="web_port" value="80"></td></tr>
+<tr><td>Login</td><td><input class="w95" type="text" id="web_user" value=""></td></tr>
+<tr><td>Password</td><td><input class="w95" type="password" id="web_pass" value=""></td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<tr><th colspan="2"><b>UDP / TCP LISTENERS</b></th></tr>
+<tr><td class="w30">UDP Port</td><td><input class="w95" type="number" id="udp_port" value="0"></td></tr>
+<tr><td>TCP Port</td><td><input class="w95" type="number" id="tcp_port" value="0"></td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<tr><th colspan="2"><b><input class="s" type="checkbox" id="ntp_enab"> enable NTP (requires Client mode)</b></th></tr>
+<tr><td class="w30">URL</td><td><input class="w95" type="text" id="ntp_host" value=""></td></tr>
+<tr><td>GMT Offset [h]</td><td><input class="w95" type="number" id="gmt_offs" value=""></td></tr>
+</tbody>
+</table>
+
+<table>
+<tbody>
+<tr><th colspan="2"><b><input class="s" type="checkbox" id="ds_enab"> enable DeepSleep (for Intervall connect pins D0/GPIO16 and RST)</b></th></tr>
+<tr><td class="w30">Interval [ms]</td><td><input class="w95" type="number" id="ds_loop" value="0"></td></tr>
+</tbody>
+</table>
+
+<button type="button" onclick="save()">Save</button>
+<button type="button" onclick="reboot()">Reboot</button>
+
+</body>
+</html>

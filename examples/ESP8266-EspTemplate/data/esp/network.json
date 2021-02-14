@@ -1,0 +1,21 @@
+{
+	"apMode": false,
+	"wlSsid": "MyWlanSsid",
+	"wlPass": "MyPassword",
+	"wlSip4": "DHCP",
+	"apName": "ESPTemplate",
+	"apPass": "",
+	"apSip4": "192.168.4.1",
+	"apChan": "9",
+	"hstName": "ESPTemplate",
+	"webPort": "80",
+	"webUser": "",
+	"webPass": "",
+	"udpPort": "0",
+	"tcpPort": "21",
+	"ntpEnab": true,
+	"ntpHost": "de.pool.ntp.org",
+	"gmtOffs": "1",
+	"dsEnab":  false,
+	"dsLoop": "0"
+}

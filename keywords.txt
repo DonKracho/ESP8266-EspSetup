@@ -1,0 +1,60 @@
+#######################################
+# Syntax Coloring Map For EspSetup
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+EspSetup			KEYWORD1
+NtpClient			KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+Setup				KEYWORD2
+Loop				KEYWORD2
+IsAP				KEYWORD2
+UDP				KEYWORD2
+TCP				KEYWORD2
+GetFS				KEYWORD2
+CheckWebServerCredentials	KEYWORD2
+GetUniqueDeviceName 		KEYWORD2
+GetDeviceName			KEYWORD2
+GetContentType			KEYWORD2
+WebSocketConnected		KEYWORD2
+WebSocketSend			KEYWORD2
+WebSocketBroadcast		KEYWORD2
+WebSocketCallback		KEYWORD2
+TelnetCallback			KEYWORD2
+WriteFile			KEYWORD2
+ReadFile			KEYWORD2
+handleFileRead			KEYWORD2
+
+UtcTime				KEYWORD2
+LocalTime			KEYWORD2
+fromIsoDateTimeString		KEYWORD2
+getIsoDateTimeString		KEYWORD2
+getUtcIsoDateTimeString		KEYWORD2
+getLocalIsoDateTimeString	KEYWORD2
+getDateTimeString		KEYWORD2
+getDateTimeString		KEYWORD2
+getElapsedSecsToday		KEYWORD2
+isDaylightSavingTime		KEYWORD2
+isDaylightSavingTime		KEYWORD2
+isValid				KEYWORD2
+setGmtOffset			KEYWORD2
+getGmtOffset			KEYWORD2
+
+#######################################
+# Instances (KEYWORD3)
+#######################################
+
+NtpClientAsync 			KEYWORD3
+NullSerial  			KEYWORD3
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

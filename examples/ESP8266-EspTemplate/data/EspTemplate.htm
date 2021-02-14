@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>EspTemplate</title>
+<style>
+body{zoom:1;margin:5px 5px 0px 5px;font:1.0em Arial;color:#eee;background:#2a3649;}
+table{width:100%;box-shadow:5px 5px 9px #111;}
+table,th,td{margin:0px 0px 5px 0px;text-align:center;color:#111;background:#eee;border:1px solid black;border-spacing:0;border-collapse:collapse;}
+th{padding:6px;font-weight:bold;color:#eee;background:linear-gradient(to bottom,#888,#000);}
+td{padding:3px;border-bottom:none;}
+.but,button{outline:none;width:168px;font:1.0em Arial;display:inline-block;white-space:nowrap;background:linear-gradient(to bottom,#fff,#777);border:1px solid #777;padding:12px;margin:12px 0px 12px 3px;text-shadow:1px 1px 0 rgba(255,255,255,0.5);color:#111;text-decoration:none;border-radius:.2em;box-shadow:3px 3px 6px #333;}
+.but:active,button:active{box-shadow:inset 2px 2px 4px #333;transform: translateY(2px);}
+p{margin:5px;}
+input{font:1.0em Arial;}
+.b{font:1.5em Arial;text-shadow:1px 1px 1px #000;}
+.f{font:2.0em Arial;}
+.h{font:3.0em Arial;}
+.w30{width:30%;}
+.w95{width:95%;}
+.g{background:#0f0;}
+</style>
+
+<script type="text/javascript" charset="utf-8">
+'use strict';
+var audio = new SpeechSynthesisUtterance();
+var sound = new AudioContext();
+var connection = new WebSocket('ws://'+location.hostname+':81/',['arduino']);
+function beep()
+{
+var osc=sound.createOscillator();
+osc.type='triangle';
+osc.frequency.value=880;
+var env=sound.createGain();
+env.connect(sound.destination);
+env.gain.exponentialRampToValueAtTime(0.00001,sound.currentTime+3);
+osc.connect(env);osc.start(0);
+}
+connection.onopen=function()
+{
+connection.send('EspTemplate '+new Date());
+}
+connection.onmessage=function(e)
+{
+if(e.data.startsWith('{"time"'))fill(e.data);
+}
+connection.onerror=function(error)
+{
+console.log('WebSocket Error '+error);
+}
+function save()
+{
+var obj = new Object();
+obj.text = document.getElementById('text_input').value;
+obj.slid = document.getElementById('range_input').value;
+var jsonString = JSON.stringify(obj,null,'\t');
+connection.send('Save'+jsonString);
+}
+function fill(jsonString)
+{
+var obj = JSON.parse(jsonString);
+if (obj.time) document.getElementById('date_time').innerHTML = obj.time;
+if (obj.text) document.getElementById('text_input').value = obj.text;
+if (obj.slid) document.getElementById('range_input').value = obj.slid;
+}
+function speek()
+{
+audio.text = document.getElementById('text_input').value;
+window.speechSynthesis.speak(audio);
+}
+function reboot()
+{
+connection.send('Reboot');
+}
+</script>
+</head>
+<body>
+<div class="b">ESP Template</div>
+<br>
+<table>
+<tbody><tr><th colspan="2"><b>Table Header</b></th></tr>
+<tr><td class="w30">NTP Time</td><td id="date_time"></td></tr>
+<tr><td>Text Input</td><td><input class="w95" type="text" id="text_input" value=""></td></tr>
+<tr><td>Range Input</td><td><input class="w95" type="range" id="range_input" min="0" max="59" value="0"></td></tr>
+</tbody>
+</table>
+
+<button type="button" onclick="save()">Save</button>
+<button type="button" onclick="speek()">Speek</button>
+<button type="button" onclick="beep()">Beep</button>
+<button type="button" onclick="reboot()">Reboot</button>
+
+</body>
+</html>
