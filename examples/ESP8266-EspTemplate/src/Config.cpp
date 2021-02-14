@@ -54,7 +54,6 @@ bool Config::ReadConfig()
   {
     CONSOLE.println("reading configuration:");
 
-    int i, last;
     JsonObject obj = doc.as<JsonObject>();
     String Config = obj["Config"].as<String>();
     String Version = obj["Version"].as<String>();

@@ -36,12 +36,12 @@ String replyString(bool all) {
   return conf;
 }
 
-void ws_callback_fn(uint8_t num, WStype_t type, const char *payload, size_t len) {
+void ws_callback_fn(uint8_t num, WStype_t type, const uint8_t *payload, size_t len) {
   if (type == WStype_TEXT) {
     CONSOLE.printf("[%u] got Text: %s\n", num, payload);
-    if (!strncmp(payload, "EspTemplate", 8)) { esp.WebSocketSend(num, replyString(true)); }
-    else if (!strncmp(payload, "Save", 4))   { getValues((char*) &payload[4]); esp.WriteFile(EspTemplateFile, &payload[4]); }
-    else if (!strncmp(payload, "Reboot", 6)) { ESP.reset(); }
+    if (len >= 8 && !strncmp((const char*) payload, "EspTemplate", 8)) { esp.WebSocketSend(num, replyString(true)); }
+    else if (len > 4 && !strncmp((const char*) payload, "Save", 4))   { getValues((char*) &payload[4]); esp.WriteFile(EspTemplateFile, (const char*) &payload[4]); }
+    else if (len >= 6 && !strncmp((const char*) payload, "Reboot", 6)) { ESP.reset(); }
   }
 }
 
@@ -70,7 +70,7 @@ void setup() {
   });
 
   // configure callback functions
-  esp.WebSocketCallback(ws_callback_fn);
+  esp.AddWebSocketCallback(ws_callback_fn);
   esp.TelnetCallback(tn_callback_fn);
 
   // restore example web page content 
