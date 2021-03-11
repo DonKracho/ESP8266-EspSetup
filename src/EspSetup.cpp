@@ -620,7 +620,11 @@ void EspSetup::DeepSleep(uint32_t msDelay)
   if (dsEnab) {
     delay(msDelay);
     console.println("\nGoing to deep sleep...");
-    ESP.deepSleep(dsLoop * 1000);
+    uint64_t uptime = micros();
+    uint64_t sleeptime = dsLoop * 1000;
+    // substract current uptime to achieve more accurate loop time
+    if (sleeptime > uptime) sleeptime -= uptime; 
+    ESP.deepSleep(sleeptime);
     delay(0);
   }
 }
